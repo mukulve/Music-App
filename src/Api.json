@@ -1,0 +1,7 @@
+{
+  "method": "GET",
+  "headers": {
+    "X-RapidAPI-Key": "26ed9a7238msh42eb30a06cd1235p174ef8jsnae84630d35a5",
+    "X-RapidAPI-Host": "deezerdevs-deezer.p.rapidapi.com"
+  }
+}
