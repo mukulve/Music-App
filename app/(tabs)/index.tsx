@@ -1,70 +1,207 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import { useEffect, useState } from "react";
+import { StyleSheet, Text, View, FlatList, ScrollView } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { AlbumCover } from "@/components/AlbumCover";
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+export interface Root {
+  id: number;
+  title: string;
+  description: string;
+  duration: number;
+  public: boolean;
+  is_loved_track: boolean;
+  collaborative: boolean;
+  nb_tracks: number;
+  fans: number;
+  link: string;
+  share: string;
+  picture: string;
+  picture_small: string;
+  picture_medium: string;
+  picture_big: string;
+  picture_xl: string;
+  checksum: string;
+  tracklist: string;
+  creation_date: string;
+  md5_image: string;
+  picture_type: string;
+  creator: Creator;
+  type: string;
+  tracks: Tracks;
+}
+
+export interface Creator {
+  id: number;
+  name: string;
+  tracklist: string;
+  type: string;
+}
+
+export interface Tracks {
+  data: Daum[];
+  checksum: string;
+}
+
+export interface Daum {
+  id: number;
+  readable: boolean;
+  title: string;
+  title_short: string;
+  title_version?: string;
+  link: string;
+  duration: number;
+  rank: number;
+  explicit_lyrics: boolean;
+  explicit_content_lyrics: number;
+  explicit_content_cover: number;
+  preview: string;
+  md5_image: string;
+  time_add: number;
+  artist: Artist;
+  album: Album;
+  type: string;
+}
+
+export interface Artist {
+  id: number;
+  name: string;
+  link: string;
+  tracklist: string;
+  type: string;
+}
+
+export interface Album {
+  id: number;
+  title: string;
+  cover: string;
+  cover_small: string;
+  cover_medium: string;
+  cover_big: string;
+  cover_xl: string;
+  md5_image: string;
+  tracklist: string;
+  type: string;
+}
 
 export default function HomeScreen() {
+  const rap = ["6682665064", "1677006641", "3188520162", "10434450042"];
+  const lofi = ["3338949242", "1306085715", "8749345882", "2994534926"];
+  const workout = ["2153050122", "1719648481", "2532117644", "767396371"];
+  const charts = ["3155776842", "1313621735", "1652248171", "1362508575"];
+
+  const [rapData, setRapData] = useState<Root[]>([]);
+  const [lofiData, setLofiData] = useState<Root[]>([]);
+  const [workoutData, setWorkoutData] = useState<Root[]>([]);
+  const [chartsData, setChartsData] = useState<Root[]>([]);
+
+  async function playlistData(id: String) {
+    const url = "https://deezerdevs-deezer.p.rapidapi.com/playlist/" + id;
+    const options = {
+      method: "GET",
+      headers: {
+        "x-rapidapi-key": "26ed9a7238msh42eb30a06cd1235p174ef8jsnae84630d35a5",
+        "x-rapidapi-host": "deezerdevs-deezer.p.rapidapi.com",
+      },
+    };
+
+    try {
+      const response = await fetch(url, options);
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  useEffect(() => {
+    Promise.all(rap.map((id) => playlistData(id)))
+      .then((data) => setRapData(data))
+      .catch((error) => console.error(error));
+
+    Promise.all(lofi.map((id) => playlistData(id)))
+      .then((data) => setLofiData(data))
+      .catch((error) => console.error(error));
+
+    Promise.all(workout.map((id) => playlistData(id)))
+      .then((data) => setWorkoutData(data))
+      .catch((error) => console.error(error));
+
+    Promise.all(charts.map((id) => playlistData(id)))
+      .then((data) => setChartsData(data))
+      .catch((error) => console.error(error));
+
+    return () => {
+      setRapData([]);
+      setLofiData([]);
+      setWorkoutData([]);
+      setChartsData([]);
+    };
+  }, []);
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: 'cmd + d', android: 'cmd + m' })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <SafeAreaView style={styles.main}>
+      <Text style={styles.title}>Home</Text>
+      <ScrollView>
+        <View>
+          <Text style={styles.miniTitle}>HipHop</Text>
+          <FlatList
+            data={rapData}
+            renderItem={({ item }) => <AlbumCover album={item} />}
+            keyExtractor={(_, i) => i.toString()}
+            horizontal
+          />
+        </View>
+        <View>
+          <Text style={styles.miniTitle}>Lofi</Text>
+          <FlatList
+            data={lofiData}
+            renderItem={({ item }) => <AlbumCover album={item} />}
+            keyExtractor={(_, i) => i.toString()}
+            horizontal
+          />
+        </View>
+        <View>
+          <Text style={styles.miniTitle}>Workout</Text>
+          <FlatList
+            data={workoutData}
+            renderItem={({ item }) => <AlbumCover album={item} />}
+            keyExtractor={(_, i) => i.toString()}
+            horizontal
+          />
+        </View>
+        <View>
+          <Text style={styles.miniTitle}>Charts</Text>
+          <FlatList
+            data={chartsData}
+            renderItem={({ item }) => <AlbumCover album={item} />}
+            keyExtractor={(_, i) => i.toString()}
+            horizontal
+          />
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  tinyLogo: {
+    width: 50,
+    height: 50,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  title: {
+    fontSize: 40,
+    fontWeight: "bold",
+    marginBottom: 10,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  miniTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginVertical: 5,
+  },
+  main: {
+    padding: 10,
+    flex: 1,
+    height: "100%",
+    overflow: "scroll",
   },
 });
