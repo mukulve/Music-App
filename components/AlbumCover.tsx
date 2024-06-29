@@ -11,7 +11,7 @@ export function AlbumCover(prop: any) {
       <Image
         style={styles.tinyLogo}
         source={{
-          uri: prop.album.picture_xl,
+          uri: prop.album.picture_medium,
         }}
       />
     </Pressable>

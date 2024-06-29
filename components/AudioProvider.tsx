@@ -1,6 +1,7 @@
 import { Audio } from "expo-av";
 import { useEffect, useState } from "react";
 import AudioContext from "./AudioContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export interface PlayBack {
   didJustFinish: boolean;
@@ -28,6 +29,77 @@ export default function AudioProvider({ children }: { children: any }) {
   const [playbackStatus, setPlaybackStatus] = useState<PlayBack>();
   const [tracks, setTracks] = useState<any[] | null>(null);
   const [recent, setRecent] = useState<any[]>([]);
+  const [liked, setLiked] = useState<any[] | null>(null);
+
+  async function storeLikedData() {
+    if (liked == null) return;
+
+    console.log(liked);
+    const jsonValue = JSON.stringify(liked);
+    await AsyncStorage.setItem("liked-songs", jsonValue);
+  }
+
+  async function getLikedData() {
+    try {
+      const jsonValue = await AsyncStorage.getItem("liked-songs");
+      if (jsonValue == null) {
+        setLiked(null);
+      } else {
+        setLiked(JSON.parse(jsonValue));
+      }
+    } catch (e) {
+      return console.log("error getting data");
+    }
+  }
+
+  function likeSong(song: any) {
+    if (liked == null) {
+      setLiked([song]);
+      return;
+    }
+
+    let preview = song.preview;
+    let index = liked.findIndex(
+      (track: { preview: String }) => track.preview === preview
+    );
+
+    if (index == -1) {
+      // Create a new array with the song added
+      setLiked((liked) => [...(liked == null ? [] : liked), song]);
+    } else {
+      // Create a new array with the song removed
+      setLiked((liked) =>
+        (liked == null ? [] : liked).filter((_, i) => i != index)
+      );
+    }
+  }
+
+  function isSongLiked(song: any): boolean {
+    if (liked == null) return false;
+
+    let preview = song.preview;
+    let index = liked.findIndex(
+      (track: { preview: String }) => track.preview === preview
+    );
+
+    if (index > -1) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  useEffect(() => {
+    (async () => {
+      await storeLikedData();
+    })();
+  }, [liked]);
+
+  useEffect(() => {
+    (async () => {
+      await getLikedData();
+    })();
+  }, []);
 
   async function playSound(song: any, data: any) {
     let preview = song.preview;
@@ -117,6 +189,10 @@ export default function AudioProvider({ children }: { children: any }) {
         sound,
         playbackStatus,
         seek,
+        getLikedData,
+        likeSong,
+        isSongLiked,
+        liked,
       }}
     >
       {children}

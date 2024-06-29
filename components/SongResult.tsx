@@ -22,7 +22,7 @@ export function SongResult(prop: Prop) {
       <Image
         style={styles.tinyLogo}
         source={{
-          uri: prop.song.album.cover_xl,
+          uri: prop.song.album.cover_medium,
         }}
       />
       <View>

@@ -35,7 +35,8 @@ export default function Modal() {
   let playNext: () => void;
   let playPrevious: () => void;
   let seek: (position: number) => void;
-
+  let likeSong: (song: any) => void;
+  let isSongLiked;
   const [averageColor, setColor] = useState("#fff");
   const [isDark, setIsDark] = useState("#000");
 
@@ -48,6 +49,8 @@ export default function Modal() {
       playNext,
       playPrevious,
       seek,
+      isSongLiked,
+      likeSong,
     } = audioContext);
   }
 
@@ -101,9 +104,22 @@ export default function Modal() {
           uri: tracks[currentTrackIndex].album.cover_xl,
         }}
       />
-      <Text style={[{ color: isDark }, styles.title]}>
-        {tracks[currentTrackIndex].title}
-      </Text>
+      <View style={styles.flex}>
+        <Text style={[{ color: isDark }, styles.title]}>
+          {tracks[currentTrackIndex].title}
+        </Text>
+        <Pressable onPress={() => likeSong(tracks[currentTrackIndex])}>
+          <Ionicons
+            name={
+              isSongLiked(tracks[currentTrackIndex]) == false
+                ? "heart"
+                : "heart-dislike"
+            }
+            size={40}
+            color={isDark}
+          />
+        </Pressable>
+      </View>
       <Text style={[{ color: isDark }, styles.miniTitle]}>
         {tracks[currentTrackIndex].artist.name}
       </Text>
@@ -156,5 +172,11 @@ const styles = StyleSheet.create({
     flex: 1,
     height: "100%",
     overflow: "scroll",
+  },
+  flex: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    height: "auto",
+    alignItems: "center",
   },
 });
