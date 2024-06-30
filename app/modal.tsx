@@ -106,7 +106,7 @@ export default function Modal() {
         }}
       />
       <View style={styles.flex}>
-        <Text style={[{ color: isDark }, styles.title]}>
+        <Text numberOfLines={1} style={[{ color: isDark }, styles.title]}>
           {tracks[currentTrackIndex].title}
         </Text>
         <Pressable onPress={() => likeSong(tracks[currentTrackIndex])}>

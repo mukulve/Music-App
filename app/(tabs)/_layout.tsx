@@ -131,7 +131,10 @@ export default function TabLayout() {
                 uri: tracks[currentTrackIndex].album.cover_xl,
               }}
             />
-            <Text style={[{ color: isDark }, styles.miniTitle]}>
+            <Text
+              numberOfLines={1}
+              style={[{ color: isDark }, styles.miniTitle]}
+            >
               {tracks[currentTrackIndex].title}
             </Text>
           </View>
