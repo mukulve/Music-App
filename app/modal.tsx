@@ -99,6 +99,7 @@ export default function Modal() {
           width: "100%",
           margin: "auto",
           aspectRatio: 1 / 1,
+          maxWidth: 350,
         }}
         source={{
           uri: tracks[currentTrackIndex].album.cover_xl,
@@ -129,6 +130,9 @@ export default function Modal() {
         maximumValue={playbackStatus.durationMillis}
         value={playbackStatus.positionMillis}
         onValueChange={(value) => seek(value)}
+        thumbTintColor={isDark}
+        minimumTrackTintColor={isDark}
+        maximumTrackTintColor={isDark}
       />
       <View
         style={{

@@ -1,7 +1,14 @@
 import Root from "@/app/+html";
 import { useLocalSearchParams } from "expo-router";
 
-import { Text, View, StyleSheet, Image, FlatList } from "react-native";
+import {
+  Text,
+  View,
+  StyleSheet,
+  Image,
+  FlatList,
+  ScrollView,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useEffect, useState } from "react";
 import { SongResult } from "@/components/SongResult";
@@ -110,6 +117,7 @@ const styles = StyleSheet.create({
     width: "50%",
     margin: "auto",
     aspectRatio: 1 / 1,
+    maxWidth: 300,
   },
 });
 
@@ -146,20 +154,22 @@ export default function Page() {
 
   return (
     <SafeAreaView style={styles.main}>
-      <View>
-        <Image
-          source={{ uri: albumData?.picture_xl }}
-          style={styles.hero}
-        ></Image>
-        <Text style={styles.miniTitle}>{albumData?.description}</Text>
-      </View>
-      <FlatList
-        data={albumData?.tracks.data}
-        renderItem={({ item }) => (
-          <SongResult song={item} data={albumData?.tracks.data} />
-        )}
-        keyExtractor={(_, i) => i.toString()}
-      />
+      <ScrollView>
+        <View>
+          <Image
+            source={{ uri: albumData?.picture_xl }}
+            style={styles.hero}
+          ></Image>
+          <Text style={styles.miniTitle}>{albumData?.description}</Text>
+        </View>
+        <FlatList
+          data={albumData?.tracks.data}
+          renderItem={({ item }) => (
+            <SongResult song={item} data={albumData?.tracks.data} />
+          )}
+          keyExtractor={(_, i) => i.toString()}
+        />
+      </ScrollView>
     </SafeAreaView>
   );
 }
