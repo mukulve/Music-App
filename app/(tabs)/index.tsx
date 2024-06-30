@@ -145,6 +145,7 @@ export default function HomeScreen() {
         <View>
           <Text style={styles.miniTitle}>HipHop</Text>
           <FlatList
+            initialNumToRender={3}
             data={rapData}
             renderItem={({ item }) => <AlbumCover album={item} />}
             keyExtractor={(_, i) => i.toString()}
@@ -154,6 +155,7 @@ export default function HomeScreen() {
         <View>
           <Text style={styles.miniTitle}>Lofi</Text>
           <FlatList
+            initialNumToRender={3}
             data={lofiData}
             renderItem={({ item }) => <AlbumCover album={item} />}
             keyExtractor={(_, i) => i.toString()}
@@ -163,6 +165,7 @@ export default function HomeScreen() {
         <View>
           <Text style={styles.miniTitle}>Workout</Text>
           <FlatList
+            initialNumToRender={3}
             data={workoutData}
             renderItem={({ item }) => <AlbumCover album={item} />}
             keyExtractor={(_, i) => i.toString()}
@@ -172,6 +175,7 @@ export default function HomeScreen() {
         <View>
           <Text style={styles.miniTitle}>Charts</Text>
           <FlatList
+            initialNumToRender={3}
             data={chartsData}
             renderItem={({ item }) => <AlbumCover album={item} />}
             keyExtractor={(_, i) => i.toString()}

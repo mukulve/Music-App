@@ -163,6 +163,7 @@ export default function Page() {
           <Text style={styles.miniTitle}>{albumData?.description}</Text>
         </View>
         <FlatList
+          initialNumToRender={3}
           data={albumData?.tracks.data}
           renderItem={({ item }) => (
             <SongResult song={item} data={albumData?.tracks.data} />
