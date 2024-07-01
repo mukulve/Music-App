@@ -101,6 +101,15 @@ export default function TabLayout() {
             },
           }}
         />
+        <Tabs.Screen
+          name="artist/[slug]"
+          options={{
+            title: "artist",
+            tabBarItemStyle: {
+              display: "none",
+            },
+          }}
+        />
       </Tabs>
       {tracks && (
         <Pressable

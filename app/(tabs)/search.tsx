@@ -5,6 +5,8 @@ import {
   TextInput,
   Button,
   FlatList,
+  Pressable,
+  ScrollView,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { SongResult } from "@/components/SongResult";
@@ -16,6 +18,7 @@ export default function TabTwoScreen() {
   const [textInputValue, setTextInputValue] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [nextPage, setNextPage] = useState(0);
+  const [recentSearches, setRecentSearches] = useState<String[]>([]);
 
   async function search() {
     const url = `https://deezerdevs-deezer.p.rapidapi.com/search?q=${textInputValue}`;
@@ -71,6 +74,7 @@ export default function TabTwoScreen() {
     if (textInputValue === "") setSearchResults([]);
 
     const timeout = setTimeout(() => {
+      setRecentSearches([...recentSearches, textInputValue]);
       search();
     }, 300);
 
@@ -92,18 +96,44 @@ export default function TabTwoScreen() {
             onSubmitEditing={search}
             autoFocus={true}
           ></TextInput>
-          <Button title="Cancel" onPress={() => setIsTextInputFocused(false)} />
-        </View>
-        <View style={{ width: "100%", height: "100%" }}>
-          <FlatList
-            data={searchResults}
-            renderItem={({ item }) => (
-              <SongResult song={item} data={searchResults} />
-            )}
-            keyExtractor={(_, i) => i.toString()}
-            onEndReached={loadMore}
+          <Button
+            title="Cancel"
+            onPress={() => {
+              setIsTextInputFocused(false);
+              setTextInputValue("");
+            }}
           />
         </View>
+        {textInputValue == "" && (
+          <ScrollView style={{ flex: 1 }}>
+            <Text style={styles.miniTitle}>Recently Searched</Text>
+            <View style={{ width: "100%", height: "100%" }}>
+              <FlatList
+                data={Array.from(new Set(recentSearches)).reverse()}
+                renderItem={({ item }) => (
+                  <Pressable
+                    onPress={() => setTextInputValue(item.toLowerCase())}
+                  >
+                    <Text>{item}</Text>
+                  </Pressable>
+                )}
+                keyExtractor={(_, i) => i.toString()}
+              />
+            </View>
+          </ScrollView>
+        )}
+        {textInputValue != "" && (
+          <View style={{ width: "100%", height: "100%" }}>
+            <FlatList
+              data={searchResults}
+              renderItem={({ item }) => (
+                <SongResult song={item} data={searchResults} />
+              )}
+              keyExtractor={(_, i) => i.toString()}
+              onEndReached={loadMore}
+            />
+          </View>
+        )}
       </SafeAreaView>
     );
   } else {

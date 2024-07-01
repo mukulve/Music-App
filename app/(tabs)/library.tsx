@@ -16,8 +16,8 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.main}>
+      <Text style={styles.title}>Library</Text>
       <ScrollView>
-        <Text style={styles.title}>Library</Text>
         <Text style={styles.miniTitle}>Liked</Text>
         <FlatList
           data={liked}

@@ -12,86 +12,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useEffect, useState } from "react";
 import { SongResult } from "@/components/SongResult";
 
-export interface Root {
-  id: number;
-  title: string;
-  description: string;
-  duration: number;
-  public: boolean;
-  is_loved_track: boolean;
-  collaborative: boolean;
-  nb_tracks: number;
-  fans: number;
-  link: string;
-  share: string;
-  picture: string;
-  picture_small: string;
-  picture_medium: string;
-  picture_big: string;
-  picture_xl: string;
-  checksum: string;
-  tracklist: string;
-  creation_date: string;
-  md5_image: string;
-  picture_type: string;
-  creator: Creator;
-  type: string;
-  tracks: Tracks;
-}
-
-export interface Creator {
-  id: number;
-  name: string;
-  tracklist: string;
-  type: string;
-}
-
-export interface Tracks {
-  data: Daum[];
-  checksum: string;
-}
-
-export interface Daum {
-  id: number;
-  readable: boolean;
-  title: string;
-  title_short: string;
-  title_version: string;
-  link: string;
-  duration: number;
-  rank: number;
-  explicit_lyrics: boolean;
-  explicit_content_lyrics: number;
-  explicit_content_cover: number;
-  preview: string;
-  md5_image: string;
-  time_add: number;
-  artist: Artist;
-  album: Album;
-  type: string;
-}
-
-export interface Artist {
-  id: number;
-  name: string;
-  link: string;
-  tracklist: string;
-  type: string;
-}
-
-export interface Album {
-  id: number;
-  title: string;
-  cover: string;
-  cover_small: string;
-  cover_medium: string;
-  cover_big: string;
-  cover_xl: string;
-  md5_image: string;
-  tracklist: string;
-  type: string;
-}
-
 const styles = StyleSheet.create({
   tinyLogo: {
     width: 50,
@@ -120,16 +40,96 @@ const styles = StyleSheet.create({
   },
 });
 
+export interface ArtistData {
+  id: number;
+  name: string;
+  link: string;
+  share: string;
+  picture: string;
+  picture_small: string;
+  picture_medium: string;
+  picture_big: string;
+  picture_xl: string;
+  nb_album: number;
+  nb_fan: number;
+  radio: boolean;
+  tracklist: string;
+  type: string;
+}
+
+export interface Root {
+  data: Daum[];
+  total: number;
+  next: string;
+}
+
+export interface Daum {
+  id: number;
+  readable: boolean;
+  title: string;
+  title_short: string;
+  title_version: string;
+  link: string;
+  duration: number;
+  rank: number;
+  explicit_lyrics: boolean;
+  explicit_content_lyrics: number;
+  explicit_content_cover: number;
+  preview: string;
+  contributors: Contributor[];
+  md5_image: string;
+  artist: Artist;
+  album: Album;
+  type: string;
+}
+
+export interface Contributor {
+  id: number;
+  name: string;
+  link: string;
+  share: string;
+  picture: string;
+  picture_small: string;
+  picture_medium: string;
+  picture_big: string;
+  picture_xl: string;
+  radio: boolean;
+  tracklist: string;
+  type: string;
+  role: string;
+}
+
+export interface Artist {
+  id: number;
+  name: string;
+  tracklist: string;
+  type: string;
+}
+
+export interface Album {
+  id: number;
+  title: string;
+  cover: string;
+  cover_small: string;
+  cover_medium: string;
+  cover_big: string;
+  cover_xl: string;
+  md5_image: string;
+  tracklist: string;
+  type: string;
+}
+
 export default function Page() {
-  const [albumData, setAlbumData] = useState<Root | null>();
   const { slug } = useLocalSearchParams();
+  const [artistData, setArtistData] = useState<ArtistData | null>();
+  const [artistTracks, setArtistTracks] = useState<Root | null>();
 
   useEffect(() => {
-    fetchAlbumData();
+    fetchArtistData();
   }, [slug]);
 
-  async function fetchAlbumData() {
-    const url = "https://deezerdevs-deezer.p.rapidapi.com/playlist/" + slug;
+  async function fetchArtistData() {
+    const url = "https://deezerdevs-deezer.p.rapidapi.com/artist/" + slug;
     const options = {
       method: "GET",
       headers: {
@@ -141,13 +141,32 @@ export default function Page() {
     try {
       const response = await fetch(url, options);
       const result = await response.json();
-      setAlbumData(result);
+      setArtistData(result);
+      //await getArtistTracks(result.tracklist);
     } catch (error) {
       console.error(error);
     }
   }
 
-  if (albumData == null) {
+  async function getArtistTracks(trackUrl: string) {
+    const options = {
+      method: "GET",
+      headers: {
+        "x-rapidapi-key": "26ed9a7238msh42eb30a06cd1235p174ef8jsnae84630d35a5",
+        "x-rapidapi-host": "deezerdevs-deezer.p.rapidapi.com",
+      },
+    };
+
+    try {
+      const response = await fetch(trackUrl, options);
+      const result = await response.json();
+      setArtistTracks(result);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  if (artistData == null) {
     <Text>Error</Text>;
   }
 
@@ -156,16 +175,16 @@ export default function Page() {
       <ScrollView>
         <View>
           <Image
-            source={{ uri: albumData?.picture_xl }}
+            source={{ uri: artistData?.picture_xl }}
             style={styles.hero}
           ></Image>
-          <Text style={styles.miniTitle}>{albumData?.description}</Text>
+          <Text style={styles.miniTitle}>{artistData?.name}</Text>
         </View>
         <FlatList
           initialNumToRender={3}
-          data={albumData?.tracks.data}
+          data={artistTracks?.data}
           renderItem={({ item }) => (
-            <SongResult song={item} data={albumData?.tracks.data} />
+            <SongResult song={item} data={artistTracks?.data} />
           )}
           keyExtractor={(_, i) => i.toString()}
         />

@@ -1,7 +1,7 @@
 import { View, Text, Pressable, Image, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { FastAverageColor } from "fast-average-color";
-
+import { Link } from "expo-router";
 import AudioContext from "@/components//AudioContext";
 import { useContext, useEffect, useState } from "react";
 import Slider from "@react-native-community/slider";
@@ -81,7 +81,7 @@ export default function Modal() {
     tracks.length === 0 ||
     playbackStatus == null
   ) {
-    return <View />;
+    return <Text>Error</Text>;
   }
 
   return (
@@ -121,9 +121,11 @@ export default function Modal() {
           />
         </Pressable>
       </View>
-      <Text style={[{ color: isDark }, styles.miniTitle]}>
-        {tracks[currentTrackIndex].artist.name}
-      </Text>
+      <Link href={`/artist/${tracks[currentTrackIndex].artist.id}`}>
+        <Text style={[{ color: isDark }, styles.miniTitle]}>
+          {tracks[currentTrackIndex].artist.name}
+        </Text>
+      </Link>
       <Slider
         style={{ width: "100%", height: 40 }}
         minimumValue={0}
