@@ -21,6 +21,8 @@ export default function TabTwoScreen() {
   const [recentSearches, setRecentSearches] = useState<String[]>([]);
 
   async function search() {
+    if (textInputValue === "" || textInputValue.length === 0) return;
+
     const url = `https://deezerdevs-deezer.p.rapidapi.com/search?q=${textInputValue}`;
     const options = {
       method: "GET",
@@ -114,7 +116,7 @@ export default function TabTwoScreen() {
                   <Pressable
                     onPress={() => setTextInputValue(item.toLowerCase())}
                   >
-                    <Text>{item}</Text>
+                    <Text style={styles.recentSearch}>{item}</Text>
                   </Pressable>
                 )}
                 keyExtractor={(_, i) => i.toString()}
@@ -175,6 +177,11 @@ const styles = StyleSheet.create({
   },
   miniTitle: {
     fontSize: 20,
+    fontWeight: "bold",
+    marginVertical: 5,
+  },
+  recentSearch: {
+    fontSize: 15,
     fontWeight: "bold",
     marginVertical: 5,
   },
