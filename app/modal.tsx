@@ -1,10 +1,18 @@
-import { View, Text, Pressable, Image, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  Pressable,
+  Image,
+  StyleSheet,
+  Platform,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { FastAverageColor } from "fast-average-color";
 import { Link } from "expo-router";
 import AudioContext from "@/components//AudioContext";
 import { useContext, useEffect, useState } from "react";
 import Slider from "@react-native-community/slider";
+import { LinearGradient } from "expo-linear-gradient";
 
 export interface PlayBack {
   didJustFinish: boolean;
@@ -38,7 +46,6 @@ export default function Modal() {
   let likeSong: (song: any) => void;
   let isSongLiked;
   const [averageColor, setColor] = useState("#fff");
-  const [isDark, setIsDark] = useState("#000");
 
   if (audioContext) {
     ({
@@ -55,7 +62,7 @@ export default function Modal() {
   }
 
   async function getAverageColor() {
-    if (currentTrackIndex == -1) {
+    if (currentTrackIndex == -1 || Platform.OS != "web") {
       return;
     }
 
@@ -64,7 +71,6 @@ export default function Modal() {
       .getColorAsync(tracks[currentTrackIndex].album.cover_xl)
       .then((color) => {
         setColor(color.hex);
-        color.isDark ? setIsDark("#fff") : setIsDark("#000");
       })
       .catch((e) => {
         console.log(e);
@@ -85,15 +91,7 @@ export default function Modal() {
   }
 
   return (
-    <View
-      style={[
-        {
-          backgroundColor: averageColor,
-          height: "100%",
-        },
-        styles.main,
-      ]}
-    >
+    <LinearGradient colors={[averageColor, "#000"]} style={styles.main}>
       <Image
         style={{
           width: "100%",
@@ -106,7 +104,7 @@ export default function Modal() {
         }}
       />
       <View style={styles.flex}>
-        <Text numberOfLines={1} style={[{ color: isDark }, styles.title]}>
+        <Text numberOfLines={1} style={styles.title}>
           {tracks[currentTrackIndex].title}
         </Text>
         <Pressable onPress={() => likeSong(tracks[currentTrackIndex])}>
@@ -117,12 +115,12 @@ export default function Modal() {
                 : "heart-dislike"
             }
             size={40}
-            color={isDark}
+            color={"#fff"}
           />
         </Pressable>
       </View>
       <Link href={`/artist/${tracks[currentTrackIndex].artist.id}`}>
-        <Text style={[{ color: isDark }, styles.miniTitle]}>
+        <Text style={styles.miniTitle}>
           {tracks[currentTrackIndex].artist.name}
         </Text>
       </Link>
@@ -132,9 +130,9 @@ export default function Modal() {
         maximumValue={playbackStatus.durationMillis}
         value={playbackStatus.positionMillis}
         onValueChange={(value) => seek(value)}
-        thumbTintColor={isDark}
-        minimumTrackTintColor={isDark}
-        maximumTrackTintColor={isDark}
+        thumbTintColor={"#fff"}
+        minimumTrackTintColor={"#fff"}
+        maximumTrackTintColor={"#fff"}
       />
       <View
         style={{
@@ -146,16 +144,16 @@ export default function Modal() {
         }}
       >
         <Pressable onPress={() => playPrevious()}>
-          <Ionicons name="play-back" size={40} color={isDark} />
+          <Ionicons name="play-back" size={40} color={"#fff"} />
         </Pressable>
         <Pressable onPress={() => pause()}>
-          <Ionicons name="play" size={50} color={isDark} />
+          <Ionicons name="play" size={70} color={"#fff"} />
         </Pressable>
         <Pressable onPress={() => playNext()}>
-          <Ionicons name="play-forward" size={40} color={isDark} />
+          <Ionicons name="play-forward" size={40} color={"#fff"} />
         </Pressable>
       </View>
-    </View>
+    </LinearGradient>
   );
 }
 
@@ -167,11 +165,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 40,
     fontWeight: "bold",
+    color: "white",
   },
   miniTitle: {
     fontSize: 20,
     fontWeight: "bold",
     marginVertical: 5,
+    color: "white",
   },
   main: {
     padding: 20,

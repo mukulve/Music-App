@@ -33,8 +33,6 @@ export default function AudioProvider({ children }: { children: any }) {
 
   async function storeLikedData() {
     if (liked == null) return;
-
-    console.log(liked);
     const jsonValue = JSON.stringify(liked);
     await AsyncStorage.setItem("liked-songs", jsonValue);
   }
@@ -168,12 +166,7 @@ export default function AudioProvider({ children }: { children: any }) {
       });
     }
 
-    return sound
-      ? () => {
-          console.log("Unloading Sound");
-          sound.unloadAsync();
-        }
-      : undefined;
+    return sound ? () => sound.unloadAsync() : undefined;
   }, [sound]);
 
   return (

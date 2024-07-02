@@ -2,7 +2,14 @@ import { Tabs } from "expo-router";
 import React from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
-import { View, Text, Pressable, Image, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  Pressable,
+  Image,
+  StyleSheet,
+  Platform,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 
@@ -29,7 +36,7 @@ export default function TabLayout() {
   }
 
   async function getAverageColor() {
-    if (currentTrackIndex == -1) {
+    if (currentTrackIndex == -1 || Platform.OS != "web") {
       return;
     }
 
