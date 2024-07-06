@@ -7,6 +7,7 @@ import {
   FlatList,
   Pressable,
   ScrollView,
+  useColorScheme,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { SongResult } from "@/components/SongResult";
@@ -14,6 +15,13 @@ import { SongResult } from "@/components/SongResult";
 import { useEffect, useState } from "react";
 
 export default function TabTwoScreen() {
+  const colorScheme = useColorScheme();
+
+  const themeTextStyle =
+    colorScheme === "light" ? styles.lightThemeText : styles.darkThemeText;
+  const themeContainerStyle =
+    colorScheme === "light" ? styles.lightContainer : styles.darkContainer;
+
   const [isTextInputFocused, setIsTextInputFocused] = useState(false);
   const [textInputValue, setTextInputValue] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
@@ -87,11 +95,11 @@ export default function TabTwoScreen() {
 
   if (isTextInputFocused === true) {
     return (
-      <SafeAreaView style={styles.main}>
-        <Text style={styles.title}>Search</Text>
+      <SafeAreaView style={[styles.main, themeContainerStyle]}>
+        <Text style={[styles.title, themeTextStyle]}>Search</Text>
         <View style={styles.flex}>
           <TextInput
-            style={[styles.input, { flex: 1 }]}
+            style={[styles.input, { flex: 1 }, themeTextStyle]}
             value={textInputValue}
             onChangeText={setTextInputValue}
             placeholder="Artist, Songs, Lyrics, and More"
@@ -108,7 +116,9 @@ export default function TabTwoScreen() {
         </View>
         {textInputValue == "" && (
           <ScrollView style={{ flex: 1 }}>
-            <Text style={styles.miniTitle}>Recently Searched</Text>
+            <Text style={[styles.miniTitle, themeTextStyle]}>
+              Recently Searched
+            </Text>
             <View style={{ width: "100%", height: "100%" }}>
               <FlatList
                 data={Array.from(new Set(recentSearches)).reverse()}
@@ -140,11 +150,11 @@ export default function TabTwoScreen() {
     );
   } else {
     return (
-      <SafeAreaView style={styles.main}>
+      <SafeAreaView style={[styles.main, themeContainerStyle]}>
         <View>
-          <Text style={styles.title}>Search</Text>
+          <Text style={[styles.title, themeTextStyle]}>Search</Text>
           <TextInput
-            style={styles.input}
+            style={[styles.input, themeTextStyle]}
             onFocus={() => setIsTextInputFocused(true)}
             onBlur={() => setIsTextInputFocused(false)}
             value={textInputValue}
@@ -189,5 +199,17 @@ const styles = StyleSheet.create({
     padding: 10,
     flex: 1,
     height: "100%",
+  },
+  lightContainer: {
+    backgroundColor: "#FBFBFE",
+  },
+  darkContainer: {
+    backgroundColor: "#010104",
+  },
+  lightThemeText: {
+    color: "#050316",
+  },
+  darkThemeText: {
+    color: "#EBE9FC",
   },
 });

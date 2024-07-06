@@ -31,6 +31,14 @@ export default function AudioProvider({ children }: { children: any }) {
   const [recent, setRecent] = useState<any[]>([]);
   const [liked, setLiked] = useState<any[] | null>(null);
 
+  useEffect(() => {
+    console.log("tracks changed");
+  }, [tracks]);
+
+  function updateTracks(data: any) {
+    setTracks(data);
+  }
+
   async function storeLikedData() {
     if (liked == null) return;
     const jsonValue = JSON.stringify(liked);
@@ -186,6 +194,8 @@ export default function AudioProvider({ children }: { children: any }) {
         likeSong,
         isSongLiked,
         liked,
+        setTracks,
+        updateTracks,
       }}
     >
       {children}

@@ -7,10 +7,14 @@ import {
   Image,
   FlatList,
   ScrollView,
+  TouchableOpacity,
+  useColorScheme,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useEffect, useState } from "react";
 import { SongResult } from "@/components/SongResult";
+import AudioContext from "@/components/AudioContext";
+import { useContext } from "react";
 
 export interface Root {
   id: number;
@@ -118,11 +122,51 @@ const styles = StyleSheet.create({
     aspectRatio: 1 / 1,
     maxWidth: 300,
   },
+  flex: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    gap: 40,
+  },
+  button: {
+    maxWidth: "50%",
+    minWidth: "40%",
+    padding: 15,
+    backgroundColor: "#DDDDDD",
+  },
+  extraMiniTitle: {
+    fontSize: 15,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  lightContainer: {
+    backgroundColor: "#FBFBFE",
+  },
+  darkContainer: {
+    backgroundColor: "#010104",
+  },
+  lightThemeText: {
+    color: "#050316",
+  },
+  darkThemeText: {
+    color: "#EBE9FC",
+  },
 });
 
 export default function Page() {
+  const colorScheme = useColorScheme();
+
+  const themeTextStyle =
+    colorScheme === "light" ? styles.lightThemeText : styles.darkThemeText;
+  const themeContainerStyle =
+    colorScheme === "light" ? styles.lightContainer : styles.darkContainer;
+
   const [albumData, setAlbumData] = useState<Root | null>();
   const { slug } = useLocalSearchParams();
+  let playSound: (song: any, data: any) => void;
+  const audioContext = useContext(AudioContext);
+  if (audioContext) {
+    ({ playSound } = audioContext);
+  }
 
   useEffect(() => {
     fetchAlbumData();
@@ -147,19 +191,58 @@ export default function Page() {
     }
   }
 
+  function shuffleAlbum() {
+    let songs = albumData?.tracks.data;
+    if (songs == undefined) return;
+    shuffleArray(songs);
+    playSound(songs[0], songs);
+  }
+
+  function shuffleArray(array: any[]) {
+    let currentIndex = array.length;
+    while (currentIndex != 0) {
+      let randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+      [array[currentIndex], array[randomIndex]] = [
+        array[randomIndex],
+        array[currentIndex],
+      ];
+    }
+  }
+
   if (albumData == null) {
     <Text>Error</Text>;
   }
 
   return (
-    <SafeAreaView style={styles.main}>
+    <SafeAreaView style={[styles.main, themeContainerStyle]}>
       <ScrollView>
         <View>
           <Image
             source={{ uri: albumData?.picture_xl }}
             style={styles.hero}
           ></Image>
-          <Text style={styles.miniTitle}>{albumData?.description}</Text>
+          <Text style={[styles.miniTitle, themeTextStyle]}>
+            {albumData?.description}
+          </Text>
+          <View style={styles.flex}>
+            <TouchableOpacity
+              style={[styles.button, themeContainerStyle]}
+              onPress={() =>
+                playSound(albumData?.tracks.data[0], albumData?.tracks.data)
+              }
+            >
+              <Text style={[styles.extraMiniTitle, themeTextStyle]}>Play</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.button, themeContainerStyle]}
+              onPress={shuffleAlbum}
+            >
+              <Text style={[styles.extraMiniTitle, themeTextStyle]}>
+                Shuffle
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
         <FlatList
           initialNumToRender={3}

@@ -1,4 +1,11 @@
-import { StyleSheet, Image, Text, View, Pressable } from "react-native";
+import {
+  StyleSheet,
+  Image,
+  Text,
+  View,
+  Pressable,
+  useColorScheme,
+} from "react-native";
 import AudioContext from "./AudioContext";
 import { useContext } from "react";
 
@@ -8,6 +15,11 @@ export interface Prop {
 }
 
 export function SongResult(prop: Prop) {
+  const colorScheme = useColorScheme();
+
+  const themeTextStyle =
+    colorScheme === "light" ? styles.lightThemeText : styles.darkThemeText;
+
   const audioContext = useContext(AudioContext);
   let playSound: (song: any, data: any) => void;
 
@@ -26,8 +38,10 @@ export function SongResult(prop: Prop) {
         }}
       />
       <View>
-        <Text style={styles.miniTitle}>{prop.song.title}</Text>
-        <Text>{prop.song.artist.name}</Text>
+        <Text style={[styles.miniTitle, themeTextStyle]}>
+          {prop.song.title}
+        </Text>
+        <Text style={themeTextStyle}>{prop.song.artist.name}</Text>
       </View>
     </Pressable>
   );
@@ -48,5 +62,11 @@ const styles = StyleSheet.create({
   miniTitle: {
     fontSize: 15,
     fontWeight: "bold",
+  },
+  lightThemeText: {
+    color: "#050316",
+  },
+  darkThemeText: {
+    color: "#EBE9FC",
   },
 });

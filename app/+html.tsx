@@ -41,4 +41,12 @@ body {
   body {
     background-color: #000;
   }
-}`;
+}
+* {
+  -ms-overflow-style: none;  
+  scrollbar-width: none; 
+}
+::-webkit-scrollbar { 
+  display: none;  
+}
+`;

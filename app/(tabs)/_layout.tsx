@@ -9,6 +9,7 @@ import {
   Image,
   StyleSheet,
   Platform,
+  useColorScheme,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -18,6 +19,8 @@ import { useContext, useState, useEffect } from "react";
 import { FastAverageColor } from "fast-average-color";
 
 export default function TabLayout() {
+  const colorScheme = useColorScheme();
+
   const audioContext = useContext(AudioContext);
   let currentTrackIndex: number = -1;
   let tracks: any[] = [];
@@ -54,13 +57,19 @@ export default function TabLayout() {
 
   useEffect(() => {
     getAverageColor();
-  }, [currentTrackIndex]);
+  }, [tracks, currentTrackIndex]);
 
   return (
     <>
       <Tabs
         screenOptions={{
+          tabBarActiveTintColor: colorScheme == "light" ? "#050316" : "#EBE9FC",
           headerShown: false,
+          tabBarStyle: {
+            backgroundColor: colorScheme == "light" ? "#FBFBFE" : "#010104",
+            borderColor: colorScheme == "light" ? "#FBFBFE" : "#010104",
+            borderTopColor: colorScheme == "light" ? "#FBFBFE" : "#010104",
+          },
         }}
       >
         <Tabs.Screen

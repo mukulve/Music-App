@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
-import { StyleSheet, Text, View, FlatList, ScrollView } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  ScrollView,
+  useColorScheme,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AlbumCover } from "@/components/AlbumCover";
 
@@ -84,6 +91,13 @@ export interface Album {
 }
 
 export default function HomeScreen() {
+  const colorScheme = useColorScheme();
+
+  const themeTextStyle =
+    colorScheme === "light" ? styles.lightThemeText : styles.darkThemeText;
+  const themeContainerStyle =
+    colorScheme === "light" ? styles.lightContainer : styles.darkContainer;
+
   const rap = ["6682665064", "1677006641", "3188520162", "10434450042"];
   const lofi = ["3338949242", "1306085715", "8749345882", "2994534926"];
   const workout = ["2153050122", "1719648481", "2532117644", "767396371"];
@@ -139,11 +153,11 @@ export default function HomeScreen() {
   }, []);
 
   return (
-    <SafeAreaView style={styles.main}>
-      <Text style={styles.title}>Home</Text>
+    <SafeAreaView style={[styles.main, themeContainerStyle]}>
+      <Text style={[styles.title, themeTextStyle]}>Home</Text>
       <ScrollView>
         <View>
-          <Text style={styles.miniTitle}>HipHop</Text>
+          <Text style={[styles.miniTitle, themeTextStyle]}>HipHop</Text>
           <FlatList
             initialNumToRender={3}
             data={rapData}
@@ -153,7 +167,7 @@ export default function HomeScreen() {
           />
         </View>
         <View>
-          <Text style={styles.miniTitle}>Lofi</Text>
+          <Text style={[styles.miniTitle, themeTextStyle]}>Lofi</Text>
           <FlatList
             initialNumToRender={3}
             data={lofiData}
@@ -163,7 +177,7 @@ export default function HomeScreen() {
           />
         </View>
         <View>
-          <Text style={styles.miniTitle}>Workout</Text>
+          <Text style={[styles.miniTitle, themeTextStyle]}>Workout</Text>
           <FlatList
             initialNumToRender={3}
             data={workoutData}
@@ -173,7 +187,7 @@ export default function HomeScreen() {
           />
         </View>
         <View>
-          <Text style={styles.miniTitle}>Charts</Text>
+          <Text style={[styles.miniTitle, themeTextStyle]}>Charts</Text>
           <FlatList
             initialNumToRender={3}
             data={chartsData}
@@ -207,5 +221,17 @@ const styles = StyleSheet.create({
     flex: 1,
     height: "100%",
     overflow: "scroll",
+  },
+  lightContainer: {
+    backgroundColor: "#FBFBFE",
+  },
+  darkContainer: {
+    backgroundColor: "#010104",
+  },
+  lightThemeText: {
+    color: "#050316",
+  },
+  darkThemeText: {
+    color: "#EBE9FC",
   },
 });
